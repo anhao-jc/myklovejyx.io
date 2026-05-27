@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>❤️ 全网最爱的一对CP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Georgia', '宋体', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #ffe6f0 0%, #ffd9e5 100%);
+            color: #5a2e3e;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 48px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+            padding: 30px 25px 50px;
+        }
+        /* 头部双人照片 */
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .couple-photo {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin: 0 10px;
+        }
+        .photo-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .heart-icon {
+            font-size: 48px;
+            color: #ff6b8b;
+            animation: heartbeat 1.2s infinite;
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        h1 {
+            font-size: 2rem;
+            margin: 20px 0 10px;
+            background: linear-gradient(135deg, #d44a6c, #b13e5c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .subtitle {
+            font-style: italic;
+            color: #b15a74;
+            border-top: 1px solid #ffb7c7;
+            border-bottom: 1px solid #ffb7c7;
+            display: inline-block;
+            padding: 6px 18px;
+            margin-top: 8px;
+        }
+        /* 浪漫计数器 */
+        .days-counter {
+            background: white;
+            border-radius: 60px;
+            padding: 12px 20px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
+        }
+        .days-number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #e8436e;
+            letter-spacing: 2px;
+        }
+        /* 时间线 */
+        .timeline {
+            margin: 35px 0;
+        }
+        .timeline-item {
+            background: rgba(255,245,247,0.8);
+            border-radius: 30px;
+            padding: 15px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-left: 8px solid #ff8aab;
+        }
+        .timeline-date {
+            font-weight: bold;
+            background: #ff8aab;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+        .timeline-text {
+            font-size: 1rem;
+            color: #4a2c38;
+        }
+        
+        .timeline-date {
+            font-weight: bold;
+            background: #ff8aab;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+        /* 照片画廊 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .gallery img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 28px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .gallery img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        /* 留言区 */
+        .message-box {
+            background: #fff0f3;
+            border-radius: 40px;
+            padding: 24px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            box-shadow: inset 0 0 0 2px white, 0 5px 15px rgba(0,0,0,0.05);
+        }
+        /* 爱心按钮 */
+        .love-btn {
+            background: #ff6b8b;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 12px 28px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        .love-btn:hover {
+            background: #e8436e;
+            transform: scale(1.02);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 45px;
+            font-size: 0.75rem;
+            color: #b87c8c;
+        }
+        @media (max-width: 550px) {
+            .container { padding: 20px 18px; }
+            .couple-photo { width: 120px; height: 120px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 双人照片区域 ｜ 可以放你们的合照或各自照片 -->
+    <div class="hero">
+        <div class="photo-group">
+            <img class="couple-photo" src="png5.jpg" alt="她的照片" id="photoLeft">
+            <span class="heart-icon">❤️</span>
+            <img class="couple-photo" src="png4.jpg" alt="你的照片" id="photoRight">
+        </div>
+        <h1>myk & jyx <span style="font-size:1.8rem;">✨</span></h1>
+        <div class="subtitle">“和你在一起的每一天，都是最好的时光”</div>
+    </div>
+
+    <!-- 自动计算在一起天数 -->
+    <div class="days-counter">
+        📅 我们已经相爱 <span class="days-number" id="loveDays">0</span> 天
+    </div>
+
+    <!-- 共同回忆时间线 -->
+    <div class="timeline">
+        <h3 style="margin-bottom: 15px;">🌟 我们的重要时刻</h3>
+        <div class="timeline-item">
+            <span class="timeline-date">2026.02.18</span>
+            <span class="timeline-text">💌 第一次告白 · 在一起啦</span>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">2026.02.22</span>
+            <span class="timeline-text">🎆 去看打铁花啦 → “看打铁花时，我许了一个愿望”</span>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">2026.03.13</span>
+            <span class="timeline-text">🏫 你第一次来杭州找我 来我们学校 我超级开心！ </span>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">2026.04.03</span>
+            <span class="timeline-text">🍜 在西安真的好开心 有你</span>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">2026.04.16</span>
+            <span class="timeline-text">🏖️ 一起在山东看了海~</span>
+        <!-- 你可以继续添加更多事件，复制上面的 item 块即可 -->
+    </div>
+
+    <!-- 照片墙 ｜ 改成你们真实的合照 -->
+    <h3>📸 甜甜碎片集</h3>
+    <div class="gallery" id="gallery">
+        <!-- 这里放4张示例照片，你需要替换成自己的图片 -->
+        <img src="png6.jpg" alt="回忆1" onclick="alert('“烟花好看吗 没你好看”❤️')">
+        <img src="png7.jpg" alt="回忆2" onclick="alert('跨年一起爬老顶山')">
+        <img src="png8.jpg" alt="回忆3" onclick="alert('一起看打铁花啦')">
+        <img src="png9.jpg" alt="回忆4" onclick="alert('在学涯湖边❤️')">
+        <img src="png10.jpg" alt="回忆4" onclick="alert('杭州之旅')">
+        <img src="png11.jpg" alt="回忆4" onclick="alert('在西安坐着哈哈哈哈')">
+        <img src="png12.jpg" alt="回忆4" onclick="alert('沙滩 拍立得 和你')">
+        <img src="png4.jpg" alt="回忆4" onclick="alert('最喜欢的一张照片')">
+    </div>
+
+    <!-- 想对她说的话 -->
+    <div class="message-box">
+        💖 宝宝：<br>
+        从相识到现在，你是我每天早上醒来的第一个念头。<br>
+        谢谢你包容我的小毛病，陪我笑，陪我闹。<br>
+        这个小小的网页，是我们互联网上的“秘密基地”。<br>
+        想对你说——<strong>我爱你，不止100天。</strong>
+    </div>
+
+    <!-- 点击撒爱心特效按钮 -->
+    <div style="text-align: center;">
+        <button class="love-btn" id="heartBoom">✨ 点一下，爱心炸裂 ✨</button>
+    </div>
+    <div class="footer">
+        🏠 只属于我们的回忆小站  |  永远有效  |  2026 专属定制
+    </div>
+</div>
+
+<script>
+    // 1. 计算在一起的总天数（请修改下面的起始日期为你们在一起的日期）
+    const startDate = new Date('2026-02-18');  // ⬅️ 改成你们真正的在一起日子！
+    const today = new Date();
+    const diffTime = Math.abs(today - startDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    document.getElementById('loveDays').innerText = diffDays;
+
+    // 2. 爱心爆炸特效（简单点击弹出漂浮爱心）
+    const btn = document.getElementById('heartBoom');
+    btn.addEventListener('click', () => {
+        for (let i = 0; i < 20; i++) {
+            createFloatingHeart();
+        }
+    });
+
+    function createFloatingHeart() {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤️';
+        heart.style.position = 'fixed';
+        heart.style.bottom = '20px';
+        heart.style.left = Math.random() * window.innerWidth + 'px';
+        heart.style.fontSize = (20 + Math.random() * 30) + 'px';
+        heart.style.opacity = '0.9';
+        heart.style.pointerEvents = 'none';
+        heart.style.zIndex = '9999';
+        heart.style.transition = 'all 1s ease-out';
+        document.body.appendChild(heart);
+        
+        // 动画向上飘并消失
+        setTimeout(() => {
+            heart.style.transform = `translateY(-${window.innerHeight * 0.7}px)`;
+            heart.style.opacity = '0';
+        }, 10);
+        setTimeout(() => {
+            heart.remove();
+        }, 1100);
+    }
+
+    // 可选项: 为了让照片点击体验更好，也可以不做额外动作，上面已经用 onclick 简单提示了。
+    // 如果你想在控制台偷偷写一句表白的话
+    console.log("%c❤️ 送给最爱的她 ❤️", "color: #e8436e; font-size: 20px;");
+</script>
+</body>
+</html>
