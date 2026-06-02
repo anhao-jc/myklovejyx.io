@@ -16,6 +16,92 @@
             color: #5a2e3e;
             padding: 20px;
         }
+         /* 音乐开关按钮 */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #ff6b8b;
+            color: white;
+            font-size: 22px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(255,107,139,0.4);
+            cursor: pointer;
+            z-index: 999;
+            display: none; /* 默认隐藏，解锁后显示 */
+        }
+        .music-btn:hover {
+            background: #e8436e;
+            transform: scale(1.05);
+        }
+                /* 登录验证层样式 */
+        .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ffe6f0 0%, #ffd9e5 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 48px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-question {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #e8436e;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+        .login-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 3px solid #ffb7c7;
+            border-radius: 60px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            outline: none;
+            color: #5a2e3e;
+            text-align: center;
+        }
+        .login-input:focus {
+            border-color: #ff8aab;
+        }
+        .login-btn {
+            background: #ff6b8b;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            padding: 12px 30px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .login-btn:hover {
+            background: #e8436e;
+            transform: scale(1.02);
+        }
+        .error-tip {
+            color: #e8436e;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -187,6 +273,22 @@
     </style>
 </head>
 <body>
+    <!-- 音乐开关 & 背景音乐 -->
+    <button id="musicBtn" class="music-btn">🔊</button>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="always online.mp3" type="audio/mpeg">
+    </audio>
+
+     <!-- 答题验证层 -->
+    <div class="login-wrapper" id="loginWrapper">
+        <div class="login-box">
+            <div class="heart-icon" style="margin-bottom: 20px;">❤️</div>
+            <div class="login-question" id="questionText">马雨坤最喜欢的人名字是？</div>
+            <input type="text" class="login-input" id="answerInput" placeholder="请输入答案">
+            <button class="login-btn" id="loginBtn">解锁我们的回忆 💖</button>
+            <div class="error-tip" id="errorTip">❌ 答案不对哦，再想想～</div>
+        </div>
+    </div>
 <div class="container">
     <!-- 双人照片区域 ｜ 可以放你们的合照或各自照片 -->
     <div class="hero">
@@ -262,6 +364,91 @@
 </div>
 
 <script>
+     // ========== 音乐播放功能 ==========
+    const musicBtn = document.getElementById('musicBtn');
+    const bgMusic = document.getElementById('bgMusic');
+    let isMusicPlay = false;
+
+    // 切换音乐播放/暂停
+    function toggleMusic() {
+        if (isMusicPlay) {
+            bgMusic.pause();
+            musicBtn.textContent = '🔇';
+        } else {
+            bgMusic.play().catch(err => console.log('等待交互后播放'));
+            musicBtn.textContent = '🔊';
+        }
+        isMusicPlay = !isMusicPlay;
+    }
+    musicBtn.addEventListener('click', toggleMusic);
+
+    // 答案正确后 显示音乐按钮 + 自动播放音乐
+    function showMusicBtn() {
+        musicBtn.style.display = 'block';
+        bgMusic.play().catch(err => console.log('自动播放需要用户交互'));
+        isMusicPlay = true;
+        musicBtn.textContent = '🔊';
+    }
+     // ========== 答题验证配置 ==========
+    // 1. 自定义问题和正确答案（修改这里！）
+    const CUSTOM_QUESTION = "马雨坤最喜欢的人名字是？"; // 你的问题
+    const CORRECT_ANSWER = "吉雨瑄"; // 正确答案（可以改成任意内容，比如昵称、纪念日等）
+    
+    // 2. 初始化验证界面
+    const loginWrapper = document.getElementById('loginWrapper');
+    const mainContainer = document.getElementById('mainContainer');
+    const questionText = document.getElementById('questionText');
+    const answerInput = document.getElementById('answerInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const errorTip = document.getElementById('errorTip');
+    
+    // 设置自定义问题
+    questionText.textContent = CUSTOM_QUESTION;
+
+    // 3. 答题验证逻辑
+    loginBtn.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') checkAnswer(); // 按回车也能验证
+    });
+
+    function checkAnswer() {
+        const userAnswer = answerInput.value.trim();
+        if (userAnswer === CORRECT_ANSWER) {
+            // 答案正确：隐藏验证层，显示主内容
+            showMusicBtn(); // 解锁音乐
+            loginWrapper.style.opacity = '0';
+            setTimeout(() => {
+                loginWrapper.style.display = 'none';
+                mainContainer.style.display = 'block';
+                // 添加入场动画
+                mainContainer.style.animation = 'fadeIn 0.8s ease-in';
+            }, 300);
+        } else {
+            // 答案错误：显示提示
+            errorTip.style.display = 'block';
+            // 输入框抖动动画
+            answerInput.style.animation = 'shake 0.5s ease';
+            setTimeout(() => {
+                answerInput.style.animation = '';
+            }, 500);
+        }
+    }
+
+    // 添加动画样式
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+    `;
+    document.head.appendChild(style);
+
     // 1. 计算在一起的总天数（请修改下面的起始日期为你们在一起的日期）
     const startDate = new Date('2026-02-18');  // ⬅️ 改成你们真正的在一起日子！
     const today = new Date();
