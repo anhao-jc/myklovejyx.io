@@ -16,28 +16,65 @@
             color: #5a2e3e;
             padding: 20px;
         }
-         /* 音乐开关按钮 */
-        .music-btn {
+        .music-control {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 60px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 15px rgba(255,107,139,0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            display: none;
+        }
+        .music-btn {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: #ff6b8b;
             color: white;
-            font-size: 22px;
+            font-size: 18px;
             border: none;
-            box-shadow: 0 4px 15px rgba(255,107,139,0.4);
             cursor: pointer;
-            z-index: 999;
-            display: none; /* 默认隐藏，解锁后显示 */
+            transition: 0.2s;
         }
         .music-btn:hover {
             background: #e8436e;
             transform: scale(1.05);
         }
-                /* 登录验证层样式 */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .volume-icon {
+            color: #ff6b8b;
+            font-size: 16px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 80px;
+            height: 4px;
+            border-radius: 2px;
+            background: #ffb7c7;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b8b;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #e8436e;
+            transform: scale(1.2);
+        }
         .login-wrapper {
             position: fixed;
             top: 0;
@@ -111,8 +148,8 @@
             overflow: hidden;
             backdrop-filter: blur(2px);
             padding: 30px 25px 50px;
+            display: none;
         }
-        /* 头部双人照片 */
         .hero {
             text-align: center;
             margin-bottom: 30px;
@@ -160,7 +197,6 @@
             padding: 6px 18px;
             margin-top: 8px;
         }
-        /* 浪漫计数器 */
         .days-counter {
             background: white;
             border-radius: 60px;
@@ -175,7 +211,6 @@
             color: #e8436e;
             letter-spacing: 2px;
         }
-        /* 时间线 */
         .timeline {
             margin: 35px 0;
         }
@@ -202,16 +237,6 @@
             font-size: 1rem;
             color: #4a2c38;
         }
-        
-        .timeline-date {
-            font-weight: bold;
-            background: #ff8aab;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-        }
-        /* 照片画廊 */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -231,7 +256,6 @@
             transform: scale(1.02);
             box-shadow: 0 12px 24px rgba(0,0,0,0.15);
         }
-        /* 留言区 */
         .message-box {
             background: #fff0f3;
             border-radius: 40px;
@@ -242,7 +266,6 @@
             line-height: 1.6;
             box-shadow: inset 0 0 0 2px white, 0 5px 15px rgba(0,0,0,0.05);
         }
-        /* 爱心按钮 */
         .love-btn {
             background: #ff6b8b;
             border: none;
@@ -269,46 +292,71 @@
         @media (max-width: 550px) {
             .container { padding: 20px 18px; }
             .couple-photo { width: 120px; height: 120px; }
+            .music-control {
+                flex-wrap: wrap;
+                padding: 8px 10px;
+                right: 10px;
+                top: 10px;
+            }
+            .volume-control {
+                width: 100%;
+                justify-content: center;
+                margin-top: 5px;
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
         }
     </style>
 </head>
 <body>
-    <!-- 音乐开关 & 背景音乐 -->
-    <button id="musicBtn" class="music-btn">🔊</button>
-    <audio id="bgMusic" loop preload="auto">
-        <source src="always online.mp3" type="audio/mpeg">
-    </audio>
 
-     <!-- 答题验证层 -->
-    <div class="login-wrapper" id="loginWrapper">
-        <div class="login-box">
-            <div class="heart-icon" style="margin-bottom: 20px;">❤️</div>
-            <div class="login-question" id="questionText">马雨坤最喜欢的人名字是？</div>
-            <input type="text" class="login-input" id="answerInput" placeholder="请输入答案">
-            <button class="login-btn" id="loginBtn">解锁我们的回忆 💖</button>
-            <div class="error-tip" id="errorTip">❌ 答案不对哦，再想想～</div>
-        </div>
+<!-- 音乐控制面板：上一曲 + 播放/暂停 + 下一曲 + 音量 -->
+<div class="music-control" id="musicControl">
+    <button class="music-btn" id="prevSongBtn">⬅️</button>
+    <button class="music-btn" id="playPauseBtn">🔊</button>
+    <button class="music-btn" id="nextSongBtn">➡️</button>
+    <div class="volume-control">
+        <span class="volume-icon">🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8">
     </div>
-<div class="container">
-    <!-- 双人照片区域 ｜ 可以放你们的合照或各自照片 -->
+</div>
+
+<audio id="bgMusic" loop preload="auto"></audio>
+
+<div class="login-wrapper" id="loginWrapper">
+    <div class="login-box">
+        <div class="heart-icon" style="margin-bottom: 20px;">❤️</div>
+        <div class="login-question" id="questionText">马雨坤最喜欢的人名字是？</div>
+        <input type="text" class="login-input" id="answerInput" placeholder="请输入答案">
+        <button class="login-btn" id="loginBtn">解锁我们的回忆 💖</button>
+        <div class="error-tip" id="errorTip">❌ 答案不对哦，再想想～</div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
     <div class="hero">
         <div class="photo-group">
-            <img class="couple-photo" src="png5.jpg" alt="她的照片" id="photoLeft">
+            <img class="couple-photo" src="png5.jpg" alt="她的照片">
             <span class="heart-icon">❤️</span>
-            <img class="couple-photo" src="png4.jpg" alt="你的照片" id="photoRight">
+            <img class="couple-photo" src="png4.jpg" alt="你的照片">
         </div>
-        <h1>myk & jyx <span style="font-size:1.8rem;">✨</span></h1>
+        <h1>myk & jyx ✨</h1>
         <div class="subtitle">“和你在一起的每一天，都是最好的时光”</div>
     </div>
 
-    <!-- 自动计算在一起天数 -->
     <div class="days-counter">
         📅 我们已经相爱 <span class="days-number" id="loveDays">0</span> 天
     </div>
 
-    <!-- 共同回忆时间线 -->
     <div class="timeline">
-        <h3 style="margin-bottom: 15px;">🌟 我们的重要时刻</h3>
+        <h3>🌟 我们的重要时刻</h3>
         <div class="timeline-item">
             <span class="timeline-date">2026.02.18</span>
             <span class="timeline-text">💌 第一次告白 · 在一起啦</span>
@@ -319,7 +367,7 @@
         </div>
         <div class="timeline-item">
             <span class="timeline-date">2026.03.13</span>
-            <span class="timeline-text">🏫 你第一次来杭州找我 来我们学校 我超级开心！ </span>
+            <span class="timeline-text">🏫 你第一次来杭州找我 我超级开心！</span>
         </div>
         <div class="timeline-item">
             <span class="timeline-date">2026.04.03</span>
@@ -328,24 +376,21 @@
         <div class="timeline-item">
             <span class="timeline-date">2026.04.16</span>
             <span class="timeline-text">🏖️ 一起在山东看了海~</span>
-        <!-- 你可以继续添加更多事件，复制上面的 item 块即可 -->
+        </div>
     </div>
 
-    <!-- 照片墙 ｜ 改成你们真实的合照 -->
     <h3>📸 甜甜碎片集</h3>
-    <div class="gallery" id="gallery">
-        <!-- 这里放4张示例照片，你需要替换成自己的图片 -->
-        <img src="png6.jpg" alt="回忆1" onclick="alert('“烟花好看吗 没你好看”❤️')">
-        <img src="png7.jpg" alt="回忆2" onclick="alert('跨年一起爬老顶山')">
-        <img src="png8.jpg" alt="回忆3" onclick="alert('一起看打铁花啦')">
-        <img src="png9.jpg" alt="回忆4" onclick="alert('在学涯湖边❤️')">
-        <img src="png10.jpg" alt="回忆4" onclick="alert('杭州之旅')">
-        <img src="png11.jpg" alt="回忆4" onclick="alert('在西安坐着哈哈哈哈')">
-        <img src="png12.jpg" alt="回忆4" onclick="alert('沙滩 拍立得 和你')">
-        <img src="png4.jpg" alt="回忆4" onclick="alert('最喜欢的一张照片')">
+    <div class="gallery">
+        <img src="png6.jpg" onclick="alert('烟花好看吗 没你好看❤️')">
+        <img src="png7.jpg" onclick="alert('跨年一起爬老顶山')">
+        <img src="png8.jpg" onclick="alert('一起看打铁花啦')">
+        <img src="png9.jpg" onclick="alert('在学涯湖边❤️')">
+        <img src="png10.jpg" onclick="alert('杭州之旅')">
+        <img src="png11.jpg" onclick="alert('在西安坐着哈哈哈哈')">
+        <img src="png12.jpg" onclick="alert('沙滩 拍立得 和你')">
+        <img src="png4.jpg" onclick="alert('最喜欢的一张照片')">
     </div>
 
-    <!-- 想对她说的话 -->
     <div class="message-box">
         💖 宝宝：<br>
         从相识到现在，你是我每天早上醒来的第一个念头。<br>
@@ -354,142 +399,133 @@
         想对你说——<strong>我爱你，不止100天。</strong>
     </div>
 
-    <!-- 点击撒爱心特效按钮 -->
-    <div style="text-align: center;">
+    <div style="text-align:center;">
         <button class="love-btn" id="heartBoom">✨ 点一下，爱心炸裂 ✨</button>
     </div>
     <div class="footer">
-        🏠 只属于我们的回忆小站  |  永远有效  |  2026 专属定制
+        🏠 只属于我们的回忆小站 | 永远有效 | 2026 专属定制
     </div>
 </div>
 
 <script>
-     // ========== 音乐播放功能 ==========
-    const musicBtn = document.getElementById('musicBtn');
+    // 音乐列表（自己替换路径）
+    const songList = [
+        { name: "always online", src: "always online.mp3" },
+        { name: "愿与愁", src: "愿与愁.mp3" },
+        { name: "当你", src: "当你.mp3" }
+    ];
+
+    let currentSongIndex = 0;
     const bgMusic = document.getElementById('bgMusic');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const prevSongBtn = document.getElementById('prevSongBtn');
+    const nextSongBtn = document.getElementById('nextSongBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const musicControl = document.getElementById('musicControl');
     let isMusicPlay = false;
 
-    // 切换音乐播放/暂停
+    // 初始化音乐
+    function initMusic() {
+        bgMusic.src = songList[currentSongIndex].src;
+        bgMusic.volume = volumeSlider.value;
+    }
+
+    // 播放/暂停
     function toggleMusic() {
         if (isMusicPlay) {
             bgMusic.pause();
-            musicBtn.textContent = '🔇';
+            playPauseBtn.textContent = '🔇';
         } else {
-            bgMusic.play().catch(err => console.log('等待交互后播放'));
-            musicBtn.textContent = '🔊';
+            bgMusic.play().catch(err => {});
+            playPauseBtn.textContent = '🔉';
         }
         isMusicPlay = !isMusicPlay;
     }
-    musicBtn.addEventListener('click', toggleMusic);
 
-    // 答案正确后 显示音乐按钮 + 自动播放音乐
-    function showMusicBtn() {
-        musicBtn.style.display = 'block';
-        bgMusic.play().catch(err => console.log('自动播放需要用户交互'));
-        isMusicPlay = true;
-        musicBtn.textContent = '🔊';
+    // 上一曲
+    function playPrevSong() {
+        currentSongIndex = (currentSongIndex - 1 + songList.length) % songList.length;
+        bgMusic.src = songList[currentSongIndex].src;
+        if (isMusicPlay) bgMusic.play();
     }
-     // ========== 答题验证配置 ==========
-    // 1. 自定义问题和正确答案（修改这里！）
-    const CUSTOM_QUESTION = "马雨坤最喜欢的人名字是？"; // 你的问题
-    const CORRECT_ANSWER = "吉雨瑄"; // 正确答案（可以改成任意内容，比如昵称、纪念日等）
-    
-    // 2. 初始化验证界面
+
+    // 下一曲
+    function playNextSong() {
+        currentSongIndex = (currentSongIndex + 1) % songList.length;
+        bgMusic.src = songList[currentSongIndex].src;
+        if (isMusicPlay) bgMusic.play();
+    }
+
+    // 音量调节
+    function adjustVolume() {
+        bgMusic.volume = volumeSlider.value;
+        const icon = document.querySelector('.volume-icon');
+        if (volumeSlider.value == 0) icon.textContent = '🔇';
+        else if (volumeSlider.value < 0.5) icon.textContent = '🔉';
+        else icon.textContent = '🔊';
+    }
+
+    // 绑定事件
+    bgMusic.addEventListener('ended', playNextSong);
+    playPauseBtn.addEventListener('click', toggleMusic);
+    prevSongBtn.addEventListener('click', playPrevSong);
+    nextSongBtn.addEventListener('click', playNextSong);
+    volumeSlider.addEventListener('input', adjustVolume);
+
+    // 解锁后显示音乐
+    function showMusicControl() {
+        musicControl.style.display = 'flex';
+        initMusic();
+        bgMusic.play().catch(() => {});
+        isMusicPlay = true;
+        playPauseBtn.textContent = '🔉';
+    }
+
+    // 答题逻辑
+    const CORRECT_ANSWER = "吉雨瑄";
     const loginWrapper = document.getElementById('loginWrapper');
     const mainContainer = document.getElementById('mainContainer');
-    const questionText = document.getElementById('questionText');
     const answerInput = document.getElementById('answerInput');
     const loginBtn = document.getElementById('loginBtn');
     const errorTip = document.getElementById('errorTip');
-    
-    // 设置自定义问题
-    questionText.textContent = CUSTOM_QUESTION;
 
-    // 3. 答题验证逻辑
     loginBtn.addEventListener('click', checkAnswer);
-    answerInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') checkAnswer(); // 按回车也能验证
-    });
+    answerInput.addEventListener('keydown', e => e.key === 'Enter' && checkAnswer());
 
     function checkAnswer() {
-        const userAnswer = answerInput.value.trim();
-        if (userAnswer === CORRECT_ANSWER) {
-            // 答案正确：隐藏验证层，显示主内容
-            showMusicBtn(); // 解锁音乐
+        if (answerInput.value.trim() === CORRECT_ANSWER) {
+            showMusicControl();
             loginWrapper.style.opacity = '0';
             setTimeout(() => {
                 loginWrapper.style.display = 'none';
                 mainContainer.style.display = 'block';
-                // 添加入场动画
-                mainContainer.style.animation = 'fadeIn 0.8s ease-in';
+                mainContainer.style.animation = 'fadeIn 0.8s';
             }, 300);
         } else {
-            // 答案错误：显示提示
             errorTip.style.display = 'block';
-            // 输入框抖动动画
-            answerInput.style.animation = 'shake 0.5s ease';
-            setTimeout(() => {
-                answerInput.style.animation = '';
-            }, 500);
+            answerInput.style.animation = 'shake 0.5s';
+            setTimeout(() => answerInput.style.animation = '', 500);
         }
     }
 
-    // 添加动画样式
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
-        }
-    `;
-    document.head.appendChild(style);
+    // 天数计算
+    const start = new Date('2026-02-18');
+    const now = new Date();
+    const days = Math.ceil(Math.abs(now - start) / (1000*60*60*24));
+    document.getElementById('loveDays').innerText = days;
 
-    // 1. 计算在一起的总天数（请修改下面的起始日期为你们在一起的日期）
-    const startDate = new Date('2026-02-18');  // ⬅️ 改成你们真正的在一起日子！
-    const today = new Date();
-    const diffTime = Math.abs(today - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    document.getElementById('loveDays').innerText = diffDays;
-
-    // 2. 爱心爆炸特效（简单点击弹出漂浮爱心）
-    const btn = document.getElementById('heartBoom');
-    btn.addEventListener('click', () => {
-        for (let i = 0; i < 20; i++) {
-            createFloatingHeart();
-        }
-    });
-
-    function createFloatingHeart() {
-        const heart = document.createElement('div');
-        heart.innerHTML = '❤️';
-        heart.style.position = 'fixed';
-        heart.style.bottom = '20px';
-        heart.style.left = Math.random() * window.innerWidth + 'px';
-        heart.style.fontSize = (20 + Math.random() * 30) + 'px';
-        heart.style.opacity = '0.9';
-        heart.style.pointerEvents = 'none';
-        heart.style.zIndex = '9999';
-        heart.style.transition = 'all 1s ease-out';
-        document.body.appendChild(heart);
-        
-        // 动画向上飘并消失
-        setTimeout(() => {
-            heart.style.transform = `translateY(-${window.innerHeight * 0.7}px)`;
-            heart.style.opacity = '0';
-        }, 10);
-        setTimeout(() => {
-            heart.remove();
-        }, 1100);
+    // 爱心特效
+    document.getElementById('heartBoom').onclick = () => {
+        for(let i=0;i<20;i++) createHeart();
+    };
+    function createHeart() {
+        const h = document.createElement('div');
+        h.innerHTML = '❤️';
+        h.style.cssText = 'position:fixed;bottom:20px;left:'+Math.random()*innerWidth+'px;font-size:'+(20+Math.random()*30)+'px;opacity:0.9;pointer-events:none;z-index:9999;transition:all 1s';
+        document.body.appendChild(h);
+        setTimeout(()=>{h.style.transform='translateY(-70vh)';h.style.opacity=0;},10);
+        setTimeout(()=>h.remove(),1100);
     }
-
-    // 可选项: 为了让照片点击体验更好，也可以不做额外动作，上面已经用 onclick 简单提示了。
-    // 如果你想在控制台偷偷写一句表白的话
-    console.log("%c❤️ 送给最爱的她 ❤️", "color: #e8436e; font-size: 20px;");
 </script>
 </body>
 </html>
